@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#FBEBEB">
+<title>致杨岚的一封信</title>
+<style>
+/* ══════════════════════════════════════════════════════════
+   尺寸系统：整页按「视口宽度」等比缩放
+   calc(1*var(--u)) = 1 个设计像素（设计稿宽 390）
+   这样即使浏览器忽略 viewport 声明、按 980px 排版再整体缩小，
+   页面比例也完全一致，不会出现元素被 max-width 卡住而缩水的情况。
+   ══════════════════════════════════════════════════════════ */
+html{ font-size:16px; }
+:root{ --u:0.25641026vw; }   /* 1 设计像素；用 vw 直算，不受浏览器 rem 放大影响 */
+:root{
+  --pink:      #FBEBEB;   /* 主背景粉 = 封面插画自身的底色（实测值，必须一致，否则会露出一块矩形边界） */
+  --paper:     #FAF4F4;   /* 信纸留白 */
+  --ink:       #6B4A52;   /* 正文墨色 */
+  --ink-soft:  #96707A;   /* 次级文字 */
+  --tan-ink:   #7A4A28;   /* 信封标签字色 */
+  --lh:        calc(32*var(--u));     /* 正文行高 = 格线间距 */
+  --ease:      cubic-bezier(.22,.61,.36,1);
+  --font-round: "Yuanti SC","Yuanti TC","YouYuan","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  --font-hand:  "Kaiti SC","STKaiti","Kaiti TC","KaiTi","Songti SC","STSong",serif;
+}
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html{
+  height:100%; height:-webkit-fill-available;
+  background:var(--pink);
+  overflow-x:hidden;                 /* 杜绝横向溢出把布局视口撑大 */
+  scroll-snap-type:y proximity;      /* 三幕之间轻微吸附，边界更清楚 */
+  /* 关掉安卓 WebView 的"字体自动放大"，否则中间那行字会被撑到换行 */
+  -webkit-text-size-adjust:100%; text-size-adjust:100%;
+}
+body{
+  margin:0; position:relative;
+  min-height:100vh; min-height:-webkit-fill-available; min-height:100dvh;
+  background:var(--pink); color:var(--ink);
+  font-family:var(--font-round); font-size:calc(16*var(--u));
+  max-width:100%;
+  -webkit-text-size-adjust:100%; text-size-adjust:100%;
+  overscroll-behavior-y:none;
+}
+body.locked{ overflow:hidden; height:100vh; height:100dvh; }
+img{ display:block; max-width:100%; }
+button{ font-family:inherit; border:0; background:none; color:inherit; cursor:pointer; }
+
+.rv{ opacity:0; transform:translateY(calc(26*var(--u))); transition:opacity 1s var(--ease), transform 1s var(--ease); }
+.rv.in{ opacity:1; transform:none; }
+
+/* ❀ 花瓣 ❀ */
+.petals{ position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:3; }
+.petal{
+  position:absolute; top:-8vh; width:calc(13*var(--u)); height:calc(13*var(--u));
+  background:radial-gradient(circle at 32% 28%, #fff 0%, #FBD3DE 55%, #F3B6C8 100%);
+  border-radius:60% 0 60% 0; opacity:0; animation:fall linear infinite;
+}
+@keyframes fall{
+  0%   { opacity:0;  transform:translate3d(0,-8vh,0) rotate(0deg); }
+  8%   { opacity:.9; }
+  90%  { opacity:.75; }
+  100% { opacity:0;  transform:translate3d(6vw,108vh,0) rotate(420deg); }
+}
+
+/* ═══════════════ 幕 0 · 封面 ═══════════════ */
+.cover{
+  position:relative; z-index:5;
+  min-height:100vh; min-height:100dvh;
+  display:flex; flex-direction:column; align-items:center;
+  justify-content:space-between;
+  padding:calc(26*var(--u)) 0 calc(18*var(--u));
+  padding-top:max(env(safe-area-inset-top), calc(26*var(--u)));
+  padding-bottom:max(env(safe-area-inset-bottom), calc(18*var(--u)));
+  background:var(--pink);
+  transform-origin:left center; backface-visibility:hidden;
+  transition:transform 1.05s var(--ease), opacity 1.05s var(--ease), filter 1.05s var(--ease);
+  scroll-snap-align:start;
+}
+.cover.flip{
+  transform:perspective(1400px) rotateY(-96deg) translateX(-6%);
+  opacity:.15; filter:brightness(1.06); pointer-events:none;
+}
+/* ① 标题：页面最上方 */
+.cover-head{ text-align:center; padding:0 calc(22*var(--u)); }
+.cover-title{
+  margin:0; color:#8A5A66; font-weight:400;
+  font-size:calc(27*var(--u)); line-height:1.35; letter-spacing:.15em; text-indent:.15em;
+  text-shadow:0 calc(1*var(--u)) 0 rgba(255,255,255,.85), 0 calc(6*var(--u)) calc(18*var(--u)) rgba(214,160,175,.26);
+  animation:titleIn 1.5s var(--ease) both .25s;
+}
+.cover-title small{
+  display:block; margin-top:calc(7*var(--u));
+  font-size:calc(11*var(--u)); letter-spacing:.36em; text-indent:.36em; color:#B8949D;
+}
+@keyframes titleIn{ from{ opacity:0; transform:translateY(-calc(12*var(--u))); filter:blur(calc(6*var(--u)));} to{ opacity:1; transform:none; filter:none;} }
+/* ② 插画：页面中部居中。底色与页面完全一致，不加任何遮罩 */
+.cover-art{ position:relative; width:100%; }
+.cover-art > img{ width:100%; height:auto; }
+/* ③ 信封按钮：插画下方居中 */
+.cover-main{
+  display:flex; flex-direction:column; align-items:center; gap:calc(2*var(--u));
+  padding:0 calc(26*var(--u));
+}
+.envelope-btn{
+  position:relative; width:58vw;
+  animation:breathe 4.4s ease-in-out infinite;
+  transition:transform .35s var(--ease);
+}
+.envelope-btn:active{ transform:scale(.95); }
+.envelope-btn > img{ width:100%; height:auto; }
+.envelope-name{
+  position:absolute; left:9.8%; top:61.7%; width:80.4%; height:33.4%;
+  display:flex; align-items:center; justify-content:center;
+  color:var(--tan-ink); font-size:calc(16*var(--u)); letter-spacing:.22em; text-indent:.22em;
+  font-weight:700; text-shadow:0 calc(1*var(--u)) 0 rgba(255,255,255,.35); pointer-events:none;
+}
+@keyframes breathe{ 0%,100%{ transform:translateY(0) scale(1); } 50%{ transform:translateY(-calc(9*var(--u))) scale(1.022); } }
+.tap-hint{
+  color:var(--ink-soft); font-size:calc(13*var(--u)); letter-spacing:.3em; text-indent:.3em;
+  animation:hintPulse 2.6s ease-in-out infinite;
+}
+@keyframes hintPulse{ 0%,100%{opacity:.5;} 50%{opacity:1;} }
+/* ④ 底部装饰点 */
+.cover-foot{ display:flex; align-items:center; justify-content:center; gap:calc(9*var(--u)); padding:0 calc(30*var(--u)); }
+.cover-foot i{ width:calc(4*var(--u)); height:calc(4*var(--u)); border-radius:50%; background:#E4BCC6; display:block; }
+.cover-foot i:nth-child(2){ width:calc(5*var(--u)); height:calc(5*var(--u)); background:#DDA9B8; }
+.cover-foot::before, .cover-foot::after{ content:""; width:calc(42*var(--u)); height:calc(1*var(--u)); }
+.cover-foot::before{ background:linear-gradient(90deg,transparent,#EBD0D8); }
+.cover-foot::after { background:linear-gradient(90deg,#EBD0D8,transparent); }
+
+/* ═══════════════ 幕 1 · 信纸 ═══════════════ */
+.letter{
+  position:relative; z-index:1;
+  min-height:100vh; min-height:100dvh;
+  padding:calc(30*var(--u)) 0 calc(40*var(--u));
+  padding-top:max(env(safe-area-inset-top), calc(30*var(--u)));
+  padding-bottom:max(env(safe-area-inset-bottom), calc(40*var(--u)));
+  background:
+    radial-gradient(120% 60% at 50% 0%, rgba(255,255,255,.5) 0%, rgba(255,255,255,0) 60%),
+    var(--pink);
+  display:flex; justify-content:center;
+  /* 信纸很长，这一幕不参与滚动吸附，读的时候不会被"吸"回去 */
+}
+.sheet{
+  position:relative;
+  width:92vw; max-width:100%;
+  background:var(--paper);
+  border-radius:calc(6*var(--u));
+  box-shadow:0 calc(14*var(--u)) calc(40*var(--u)) rgba(196,150,164,.22), 0 calc(2*var(--u)) calc(6*var(--u)) rgba(196,150,164,.14);
+  padding:0 calc(34*var(--u)); overflow:hidden;
+}
+.sheet-top, .sheet-bottom{ position:relative; width:calc(100% + calc(68*var(--u))); margin:0 -calc(34*var(--u)); }
+.sheet::before, .sheet::after{
+  content:""; position:absolute; top:0; bottom:0; width:calc(26*var(--u));
+  background:url("assets/img/paper_side.jpg") repeat-y center top;
+  background-size:100% auto; pointer-events:none; z-index:2;
+}
+.sheet::before{ left:0; }
+.sheet::after{ right:0; transform:scaleX(-1); }
+.sheet-body{
+  position:relative;
+  margin:0 -calc(34*var(--u)); padding:calc(26*var(--u)) calc(34*var(--u)) calc(22*var(--u));
+  background-image:url("assets/img/paper_lines.jpg");
+  background-repeat:repeat;
+  /* 虚线落在每一行底部（文字正下方），再下压 calc(6*var(--u)) 贴近基线 */
+  background-position:center calc(var(--lh) - calc(6*var(--u)));
+  /* 源像素 65 一个行距 -> 缩放到 --lh；砖 900x390（6 行） */
+  background-size:calc(900 / 65 * var(--lh)) calc(390 / 65 * var(--lh));
+}
+.letter-text{
+  position:relative; margin:0; padding:0 calc(2*var(--u));
+  font-family:var(--font-hand);
+  font-size:calc(17*var(--u)); line-height:var(--lh);
+  color:var(--ink); letter-spacing:.02em;
+  white-space:pre-wrap; word-break:break-word;
+  text-align:justify; text-justify:inter-ideograph;   /* 中文两端对齐，右边缘齐整 */
+}
+.letter-text .sign{
+  display:block; text-align:right; margin-top:calc(1*var(--u));
+  color:var(--ink-soft); letter-spacing:.08em;
+}
+.sheet-bottom{ margin-top:-calc(2*var(--u)); }
+
+/* ═══════════════ 幕 2 · 末页 ═══════════════ */
+.final{
+  position:relative; z-index:1; overflow:hidden;
+  min-height:100vh; min-height:100dvh;
+  padding:calc(16*var(--u)) 0 calc(24*var(--u));
+  padding-top:max(env(safe-area-inset-top), calc(16*var(--u)));
+  padding-bottom:max(env(safe-area-inset-bottom), calc(24*var(--u)));
+  background:#FBEBEB;
+  scroll-snap-align:start;
+}
+/* 顶部与上一幕同色渐隐，避免两页"糊"在一起（只压很窄一条，不挡住缩略图） */
+.final::after{
+  content:""; position:absolute; left:0; right:0; top:0; height:6vh; z-index:3;
+  background:linear-gradient(180deg, rgba(251,235,235,.9) 0%, rgba(251,235,235,0) 100%);
+  pointer-events:none;
+}
+.final-bg{
+  position:absolute; inset:-12%;
+  background:url("assets/img/vinyl_bg.jpg") center/cover no-repeat;
+  filter:blur(calc(30*var(--u))) saturate(.95) brightness(1.22);
+  opacity:.85; z-index:0;
+}
+.final-veil{
+  position:absolute; inset:0; z-index:1;
+  background:
+    radial-gradient(74% 54% at 50% 46%, rgba(255,253,253,.95) 0%, rgba(255,251,251,.78) 44%, rgba(251,235,235,.5) 100%),
+    linear-gradient(180deg, rgba(255,255,255,.4), rgba(251,235,235,.55));
+}
+/* 末页用「纵向流式排布」，唱片和缩略图各占各的位置，永远不会互相遮挡 */
+.final-stage{
+  position:relative; z-index:5; box-sizing:border-box;
+  display:flex; flex-direction:column; justify-content:space-between;
+  min-height:100vh; min-height:100dvh;
+  gap:2vh;
+  padding:calc(max(env(safe-area-inset-top), calc(14*var(--u))) + 2vh) 0 calc(max(env(safe-area-inset-bottom), calc(14*var(--u))) + 2vh);
+}
+.frow{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 2.5vw;
+}
+.tile{
+  /* 手机越矮 → 缩略图越小，保证永远压不到中间文字卡 */
+  width:min(42vw, 19vh);
+  border-radius:calc(3*var(--u)); overflow:hidden;
+  box-shadow:0 calc(8*var(--u)) calc(20*var(--u)) rgba(150,105,120,.22);
+  border:calc(4*var(--u)) solid #fff;
+  opacity:0; filter:blur(calc(9*var(--u))) brightness(1.06);
+  transform:scale(.9) rotate(var(--rot,0deg));
+  transition:opacity 1.15s var(--ease), transform 1.15s var(--ease), filter 1.15s var(--ease);
+  transition-delay:calc(var(--i) * .5s);
+}
+.tile img{ width:100%; height:auto; }
+.final.in .tile{
+  opacity:.94; filter:blur(0) brightness(1.01);
+  transform:scale(1) rotate(var(--rot,0deg));
+}
+.frow-c{ justify-content:center; }
+/* 唱片 = 常驻右上角的音乐开关（点一下开始转+播，再点暂停） */
+.disc{
+  position:fixed; z-index:60; padding:0; border-radius:50%;
+  right:3vw; top:calc(max(env(safe-area-inset-top), calc(10*var(--u))) + 1.5vh);
+  width:min(15vw, calc(62*var(--u)));
+  opacity:0; animation:discIn 1.2s var(--ease) .4s both;
+  filter:drop-shadow(0 calc(6*var(--u)) calc(14*var(--u)) rgba(120,86,96,.3));
+  transition:transform .25s var(--ease);
+}
+@keyframes discIn{ from{opacity:0; transform:scale(.7);} to{opacity:1; transform:scale(1);} }
+.disc img{
+  width:100%; height:auto; border-radius:50%;
+  animation:spin 13s linear infinite; animation-play-state:paused;
+}
+.disc.playing img{ animation-play-state:running; }
+.disc:active{ transform:scale(.92); }
+@keyframes spin{ to{ transform:rotate(360deg); } }
+
+/* ═══════════════ 幕 3 · 许愿页 ═══════════════ */
+.wish{
+  position:relative; z-index:1; overflow:hidden;
+  min-height:100vh; min-height:100dvh;
+  scroll-snap-align:start;
+}
+.wish-bg{
+  position:absolute; inset:0; z-index:0;
+  background:url("assets/img/wish_bg.jpg") center top/cover no-repeat;
+}
+/* 顶部轻轻盖一层同色雾，让气泡框和文字更清楚，往下渐变露出纸纹 */
+.wish-bg::after{
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(180deg,
+    rgba(244,242,238,.95) 0%, rgba(244,242,238,.86) 26%,
+    rgba(244,242,238,.34) 52%, rgba(244,242,238,0) 74%);
+}
+/* ❄ 流星层（参考图5，浅色打在奶油纸上） */
+.meteors{ position:absolute; inset:0; z-index:2; overflow:hidden; pointer-events:none; }
+.meteor{
+  position:absolute; width:15vw; height:calc(1.6*var(--u)); border-radius:calc(2*var(--u));
+  background:linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.95));
+  opacity:0; animation:meteor linear infinite;
+}
+.meteor::after{
+  content:""; position:absolute; right:-calc(2*var(--u)); top:50%; width:calc(5*var(--u)); height:calc(5*var(--u));
+  transform:translateY(-50%); border-radius:50%;
+  background:#fff; box-shadow:0 0 calc(10*var(--u)) calc(4*var(--u)) rgba(255,236,240,.95), 0 0 calc(22*var(--u)) calc(10*var(--u)) rgba(255,214,226,.6);
+}
+@keyframes meteor{
+  0%   { opacity:0; transform:translate3d(0,0,0) rotate(152deg); }
+  7%   { opacity:1; }
+  70%  { opacity:.85; }
+  100% { opacity:0; transform:translate3d(-78vw, 78vh, 0) rotate(152deg); }
+}
+.wish-stage{
+  position:relative; z-index:5; box-sizing:border-box;
+  display:flex; flex-direction:column; align-items:center;
+  min-height:100vh; min-height:100dvh;
+  padding:calc(max(env(safe-area-inset-top), calc(12*var(--u))) + 3vh) 0 calc(max(env(safe-area-inset-bottom), calc(14*var(--u))) + 2vh);
+}
+/* 气泡框：图2 抠出来的，文字压在框里原来 "Welcome!" 的位置 */
+.wish-frame{ position:relative; width:88vw; max-width:100%; }
+.wish-frame > img{ width:100%; height:auto; }
+.wish-slot{
+  position:absolute; left:10%; right:10%; top:27%;
+  text-align:center; display:flex; flex-direction:column; align-items:center;
+}
+.wish-title{
+  margin:0; font-weight:400; color:#B4705F;
+  font-size:min(9.6vw, 4.3vh); line-height:1.25; letter-spacing:.04em; text-indent:.04em;
+  text-shadow:0 0 calc(6*var(--u)) rgba(255,255,255,.95), 0 0 calc(14*var(--u)) rgba(255,255,255,.8);
+}
+.wish-line{ margin-top:1.3vh; width:100%; position:relative; }
+#wishInput{
+  display:block; width:100%; box-sizing:border-box;
+  border:0; outline:0; background:transparent; padding:0 calc(1*var(--u));
+  color:#B4705F; font-family:inherit; text-align:center;
+  font-size:min(5.6vw, 2.5vh); line-height:1.5;
+  border-bottom:calc(1.4*var(--u)) dashed rgba(200,140,130,.45);
+  transition:border-color .3s var(--ease), opacity .4s var(--ease);
+}
+#wishInput::placeholder{ color:rgba(190,140,132,.72); letter-spacing:.02em; }
+#wishInput:focus{ border-bottom-color:rgba(190,120,110,.85); }
+#wishInput.hide{ display:none; }
+.wish-echo{
+  display:none; color:#B4705F;
+  font-size:min(9.6vw, 4.3vh); line-height:1.25; letter-spacing:.04em;
+  word-break:break-word;
+  text-shadow:0 0 calc(6*var(--u)) rgba(255,255,255,.95), 0 0 calc(14*var(--u)) rgba(255,255,255,.8);
+}
+.wish-echo.show{ display:block; animation:echoIn .7s var(--ease) both; }
+@keyframes echoIn{ from{ opacity:0; transform:scale(.86);} to{ opacity:1; transform:scale(1);} }
+.wish-go{
+  margin-top:3vh; padding:1.3vh 7vw; border-radius:calc(999*var(--u));
+  background:rgba(255,255,255,.92);
+  border:calc(1.4*var(--u)) solid rgba(214,160,150,.55);
+  color:#B4705F; font-size:min(5.4vw, 2.4vh); letter-spacing:.16em; text-indent:.16em;
+  box-shadow:0 calc(6*var(--u)) calc(18*var(--u)) rgba(190,150,140,.25);
+  transition:transform .25s var(--ease), opacity .4s var(--ease);
+}
+.wish-go:active{ transform:scale(.95); }
+.wish-go.done{ opacity:.35; pointer-events:none; }
+.wish-go.shake{ animation:shake .45s ease-in-out; }
+@keyframes shake{ 0%,100%{transform:translateX(0);} 25%{transform:translateX(-calc(6*var(--u)));} 75%{transform:translateX(calc(6*var(--u)));} }
+/* 许愿成功的弹出（图4） */
+.wish-pop{
+  position:fixed; inset:0; z-index:80; display:none;
+  align-items:center; justify-content:center;
+  background:rgba(255,252,252,.5);
+  -webkit-backdrop-filter:blur(calc(3*var(--u))); backdrop-filter:blur(calc(3*var(--u)));
+}
+.wish-pop.show{ display:flex; animation:popFade .4s var(--ease) both; }
+@keyframes popFade{ from{opacity:0;} to{opacity:1;} }
+.wish-pop img{
+  width:62vw; max-width:280px; border-radius:9vw;
+  box-shadow:0 calc(18*var(--u)) calc(44*var(--u)) rgba(150,120,120,.3);
+  animation:popIn .62s cubic-bezier(.2,1.45,.4,1) both;
+}
+@keyframes popIn{ from{ opacity:0; transform:scale(.5);} to{ opacity:1; transform:scale(1);} }
+.pop-ring{
+  position:absolute; width:62vw; max-width:280px; aspect-ratio:1/1; border-radius:50%;
+  border:calc(2*var(--u)) solid rgba(255,236,240,.9); opacity:0;
+}
+.wish-pop.show .pop-ring{ animation:popRing .9s var(--ease) .1s both; }
+@keyframes popRing{ from{ opacity:.9; transform:scale(.5);} to{ opacity:0; transform:scale(1.5);} }
+
+.final-card{
+  position:relative; z-index:10;
+  margin:0 auto; width:84vw;
+  padding:calc(30*var(--u)) calc(26*var(--u)) calc(32*var(--u)); text-align:center;
+  background:rgba(255,253,253,.94);
+  border:calc(1*var(--u)) solid rgba(240,214,220,.95);
+  border-radius:calc(16*var(--u));
+  box-shadow:0 calc(18*var(--u)) calc(44*var(--u)) rgba(180,132,146,.24), inset 0 0 0 calc(6*var(--u)) rgba(255,255,255,.6);
+  opacity:0; transform:translateY(calc(24*var(--u)));
+  transition:opacity 1.3s var(--ease) 1.1s, transform 1.3s var(--ease) 1.1s;
+}
+.final.in .final-card{ opacity:1; transform:none; }
+.final-card h2{
+  margin:0 0 calc(14*var(--u)); font-weight:400; text-align:center;
+  font-size:calc(32*var(--u)); letter-spacing:.16em; text-indent:.16em; color:#8A5A66;
+  text-shadow:0 calc(2*var(--u)) calc(10*var(--u)) rgba(226,180,192,.5);
+}
+/* 用 flex 居中：微信 X5 内核会给 <p> 强加自己的排版，覆盖继承来的 text-align，
+   所以这里不靠 text-align，改由 flex 保证一定居中 */
+.final-card p{
+  margin:0; padding:0; display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-hand); text-align:center;
+  font-size:calc(18*var(--u)); line-height:1.9; color:var(--ink); letter-spacing:.05em;
+  white-space:nowrap;              /* 这行必须完整显示，绝不允许折行 */
+}
+.final-card .rule{
+  width:calc(58*var(--u)); height:calc(2*var(--u)); margin:calc(16*var(--u)) auto 0; border-radius:calc(2*var(--u));
+  background:linear-gradient(90deg, transparent, #EFC9D3, transparent);
+}
+.final-sign{
+  position:relative; z-index:10; margin:calc(2*var(--u)) 0 0;
+  display:flex; align-items:center; justify-content:center;
+  width:100%; box-sizing:border-box; text-align:center;
+  color:#B08A94; font-size:calc(12*var(--u)); letter-spacing:.28em; text-indent:.28em;
+  white-space:nowrap;
+  opacity:0; transition:opacity 1.4s var(--ease) 2.6s;
+}
+.final.in .final-sign{ opacity:1; }
+/* 浏览器拒绝自动播放时才出现的提示 */
+.music-hint{
+  display:none; position:relative; z-index:10;
+  margin:calc(6*var(--u)) 0 0; text-align:center;
+  font-size:calc(11*var(--u)); letter-spacing:.1em; color:#C08A98;
+}
+.music-hint.show{ display:block; }
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration:.001ms !important; animation-delay:0s !important;
+     transition-duration:.01s !important; transition-delay:0s !important; }
+  .petal,.meteor{ display:none; }
+  html{ scroll-snap-type:none; }
+  .rv{ opacity:1 !important; transform:none !important; }
+  .tile{ opacity:.9 !important; filter:none !important; transform:rotate(var(--rot,0deg)) !important; }
+  .disc,.final-card,.final-sign,.cover-title{ opacity:1 !important; transform:none !important; filter:none !important; }
+  .wish-echo{ opacity:1 !important; transform:none !important; }
+}
+</style>
+<noscript><style>
+  /* 脚本被禁用时的兜底：全部内容直接可见、可滚动 */
+  .rv,.tile,.disc,.final-card,.final-sign,.cover-title{ opacity:1 !important; transform:none !important; filter:none !important; }
+  .petal,.meteor{ display:none; }
+</style></noscript>
+<script>
+/* 尺寸基准：由 JS 实测视口宽度写入 --u（1 设计像素）
+   微信/夸克打开本地文件时，首屏可能先按 980 排版、随后才切成手机宽度，
+   纯 vw 会把这个错误值一直留到刷新；这里改成跟着真实视口走，并反复校正。 */
+(function(){
+  var root = document.documentElement;
+  function setUnit(){
+    var w = root.clientWidth || window.innerWidth || 390;
+    if(w > 0){ root.style.setProperty('--u', (w / 390) + 'px'); }
+  }
+  setUnit();
+  window.addEventListener('resize', setUnit, {passive:true});
+  window.addEventListener('orientationchange', setUnit, {passive:true});
+  window.addEventListener('pageshow', setUnit, {passive:true});
+  document.addEventListener('DOMContentLoaded', setUnit);
+  window.addEventListener('load', setUnit);
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize', setUnit, {passive:true});
+  }
+  /* 兜底：连测 6 秒，覆盖"先按 980 排版、稍后才切成手机宽度"的情况 */
+  var n = 0, t = setInterval(function(){ setUnit(); if(++n > 24) clearInterval(t); }, 250);
+})();
+</script>
+</head>
+<body>
+
+<!-- ══════════ 幕 0 · 封面 ══════════ -->
+<section class="cover" id="s0">
+  <div class="petals" id="petals0"></div>
+
+  <div class="cover-head">
+    <h1 class="cover-title">致杨岚的一封信<small>FOR YANG LAN</small></h1>
+  </div>
+
+  <div class="cover-art">
+    <img src="assets/img/cover.jpg" alt="Sanrio characters">
+  </div>
+
+  <div class="cover-main">
+    <button class="envelope-btn" id="openBtn" aria-label="开启这封信">
+      <img src="assets/img/envelope.png" alt="">
+      <span class="envelope-name">致 杨岚</span>
+    </button>
+    <div class="tap-hint">轻 触 开 启</div>
+  </div>
+
+  <div class="cover-foot"><i></i><i></i><i></i></div>
+</section>
+
+<!-- ══════════ 幕 1 · 信纸 ══════════ -->
+<section class="letter" id="s1">
+  <div class="sheet rv">
+    <img class="sheet-top" src="assets/img/paper_top.jpg" alt="">
+    <div class="sheet-body">
+      <div class="letter-text" id="letterText">致杨岚：
+
+　　我知道你正在经历一段独属于自己的艰难时光，你一直都很坚强，爱哭从来都不是脆弱的象征，流下的是你勇于面对现实中困难的勇气。很多时候我们并不是想独自面对，只是不懂得该如何去表达。我想请你耐心的看完这段简短的话，我不清楚应该怎么向你表达，只是想在你陷入困境的时候给你搭把手。
+
+　　现实是复杂的混沌系统，没有线性的因果链条，运气的不可控始终存在，我们不得不承认运气无法由自己掌控。面对已经付出却没有回响的沉没成本，我们不用逼自己快点翻篇走出来，难过从来不是矫情，那是你在哀悼那段毫无回响的付出，这份丧失感让人感到痛苦。希望你允许情绪自然流动，不用着急逼自己立刻好起来，哀伤本身就是一种自我和解的过程。我们总习惯自我攻击，反复责怪自己“为什么没做好”，但此刻最该做的不是急着复盘反思，而是好好接纳那个无助又失落的自己。
+
+　　在时间维度上，过去的遗憾和还没发生的未来，都不如你当下的感受重要。不管你现在心里正被什么事压得喘不过气，都别陷在焦虑和自我内耗里。当你试着放下之后，得到的结果并不是你最初想要的，也不要灰心。请一定相信未来，那些经历最终都会在你身上转化成属于你的好事。上坡的时候就全力努力，走下坡路的时候就开开心心享受节奏，慢慢来，一切都终有回甘！
+
+　　我不知道对你说这些话是否有什么意义，但我希望你在看到的时候能开心一会会。为自己开心一会吧，你已经很棒了，正因为你努力过才成就了现在的你。</div>
+    </div>
+    <img class="sheet-bottom" src="assets/img/paper_bottom.jpg" alt="">
+  </div>
+</section>
+
+<!-- ══════════ 幕 3 · 许愿页 ══════════ -->
+<section class="wish" id="s2">
+  <div class="wish-bg"></div>
+  <div class="meteors" id="meteors"></div>
+
+  <div class="wish-stage">
+    <div class="wish-frame">
+      <img src="assets/img/wish_frame.png" alt="">
+      <div class="wish-slot">
+        <h2 class="wish-title">下一个愿望是？</h2>
+        <div class="wish-line">
+          <input id="wishInput" type="text" maxlength="16" autocomplete="off"
+                 enterkeyhint="done" placeholder="写下你的愿望吧">
+          <div class="wish-echo" id="wishEcho"></div>
+        </div>
+      </div>
+    </div>
+    <button class="wish-go" id="wishGo">许愿 ✦</button>
+  </div>
+
+  <div class="wish-pop" id="wishPop"><img src="assets/img/wish_ok.jpg" alt=""><span class="pop-ring"></span></div>
+</section>
+
+<!-- ══════════ 幕 4 · 末页 ══════════ -->
+<section class="final" id="s3">
+  <div class="final-bg"></div>
+  <div class="final-veil"></div>
+  <div class="petals" id="petals2"></div>
+
+  <div class="final-stage">
+    <div class="frow">
+      <div class="tile" style="--i:0; --rot:-4deg;"><img src="assets/img/scene1.jpg" alt=""></div>
+      <div class="tile" style="--i:1; --rot:3deg;"><img src="assets/img/scene2.jpg" alt=""></div>
+    </div>
+
+    <div class="frow">
+      <div class="tile" style="--i:2; --rot:-3deg;"><img src="assets/img/scene3.jpg" alt=""></div>
+      <div class="tile" style="--i:3; --rot:4deg;"><img src="assets/img/scene4.jpg" alt=""></div>
+    </div>
+
+    <div class="final-card">
+      <h2>天天开心</h2>
+      <p>杨岚想要，杨岚得到</p>
+      <div class="rule"></div>
+    </div>
+    <div class="final-sign">THE END · 致杨岚</div>
+    <div class="music-hint" id="musicHint">没听到声音？点右上角的唱片播一次</div>
+
+    <div class="frow">
+      <div class="tile" style="--i:4; --rot:-4deg;"><img src="assets/img/scene5.jpg" alt=""></div>
+      <div class="tile" style="--i:5; --rot:-3deg;"><img src="assets/img/scene6.jpg" alt=""></div>
+    </div>
+
+    <div class="frow frow-c">
+      <div class="tile" style="--i:6; --rot:3deg;"><img src="assets/img/scene7.jpg" alt=""></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 常驻右上角的唱片（音乐开关） ══════════ -->
+<button class="disc" id="musicBtn" aria-label="背景音乐开关"><img src="assets/img/disc.png" alt=""></button>
+
+<!-- ══════════ 音乐 ══════════ -->
+<audio id="bgm" loop preload="auto" playsinline>
+  <source src="assets/audio/truth-that-you-leave.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+(function(){
+  var $  = function(s){ return document.querySelector(s); };
+  var body = document.body, cover = $('#s0'), final = $('#s3');
+  var bgm = $('#bgm'), mBtn = $('#musicBtn'), opened = false;
+  var holdFinal = false;   /* true 时暂不触发末页渐显，等滑到位再放 */
+  body.classList.add('locked');   // 由 JS 上锁：万一脚本没跑，页面仍可正常滚动阅读
+
+  /* ── 流星（许愿页，参考图5） ── */
+  (function(){
+    var box = $('#meteors');
+    if(!box) return;
+    var html = '';
+    for(var i = 0; i < 8; i++){
+      var top  = (-16 + Math.random() * 42).toFixed(1);
+      var left = (44 + Math.random() * 64).toFixed(1);
+      var dur  = (1.9 + Math.random() * 1.9).toFixed(2);
+      var del  = (Math.random() * 9).toFixed(2);
+      html += '<i class="meteor" style="top:' + top + '%;left:' + left + '%;'
+           +  'animation-duration:' + dur + 's;animation-delay:' + del + 's"></i>';
+    }
+    box.innerHTML = html;
+  })();
+
+  /* ── 花瓣 ── */
+  function petals(box, n){
+    if(!box) return;
+    var html = '';
+    for(var i=0;i<n;i++){
+      var s = 9 + Math.random()*9;
+      html += '<i class="petal" style="left:'+(Math.random()*100).toFixed(1)+'%;width:calc('+s.toFixed(1)+'*var(--u));height:calc('+s.toFixed(1)+'*var(--u));'
+           +  'animation-duration:'+(9+Math.random()*8).toFixed(1)+'s;animation-delay:'+(-Math.random()*14).toFixed(1)+'s;'
+           +  'opacity:0"></i>';
+    }
+    box.innerHTML = html;
+  }
+  petals($('#petals0'), 12);
+  petals($('#petals2'), 10);
+
+  /* ── 单文件版：把内嵌的 base64 音频转成 Blob URL ──
+        夸克等国产浏览器不认超长 data: 音频，转成 blob: 就正常了 */
+  (function(){
+    var s = bgm.querySelector('source');
+    var raw = s ? (s.getAttribute('src') || '') : '';
+    if(raw.indexOf('data:') !== 0) return;
+    try{
+      var bin = atob(raw.slice(raw.indexOf(',') + 1));
+      var buf = new Uint8Array(bin.length);
+      for(var i = 0; i < bin.length; i++){ buf[i] = bin.charCodeAt(i); }
+      var url = URL.createObjectURL(new Blob([buf], {type:'audio/mpeg'}));
+      bgm.removeAttribute('src');
+      while(bgm.firstChild){ bgm.removeChild(bgm.firstChild); }
+      bgm.src = url;
+      bgm.load();
+    }catch(err){}
+  })();
+
+  /* ── 音乐：唱片就是开关（在"点击信封"这次手势里起播） ── */
+  var hint = $('#musicHint');
+  function playMusic(){
+    try{ bgm.muted = false; bgm.volume = 1; }catch(err){}
+    var p = bgm.play();
+    mBtn.classList.add('playing');
+    if(p && p.then){
+      p.then(function(){ hint.classList.remove('show'); })
+       .catch(function(){                       // 被浏览器拦下：提示手动点唱片
+          mBtn.classList.remove('playing');
+          hint.classList.add('show');
+       });
+    }
+  }
+  mBtn.addEventListener('click', function(e){
+    e.stopPropagation();
+    if(bgm.paused){ playMusic(); } else { bgm.pause(); mBtn.classList.remove('playing'); }
+  });
+
+  /* ── 开启：翻页（默认不起播音乐，只有点右上角唱片才播） ── */
+  $('#openBtn').addEventListener('click', function(){
+    if(opened) return;
+    opened = true;
+    cover.classList.add('flip');            // 3D 翻页
+    setTimeout(function(){
+      body.classList.remove('locked');      // 解锁滚动
+      cover.style.display = 'none';
+      window.scrollTo(0, 0);
+      checkReveal();
+    }, 900);
+  });
+
+  /* ── 许愿页：点一下直接输入 → 许愿 → 弹图4 ── */
+  (function(){
+    var input = $('#wishInput'), echo = $('#wishEcho');
+    var go = $('#wishGo'), pop = $('#wishPop');
+    if(!input || !go || !pop) return;
+    var showTimer = null, left = false;
+
+    function closePop(){ pop.classList.remove('show'); }
+
+    /* 点图4 或 上下滑动 → 收起弹窗并滑到最后一页 */
+    function goTo(t){
+      if(!t) return;
+      try{ t.scrollIntoView({behavior:'smooth', block:'start'}); }
+      catch(err){ try{ t.scrollIntoView(true); }catch(e2){} }
+      /* 兜底：1 秒后还没到位就用锚点原生跳转 */
+      setTimeout(function(){
+        var top = t.getBoundingClientRect().top;
+        if(Math.abs(top) > 10){
+          try{
+            var se = document.scrollingElement || document.documentElement;
+            window.scrollTo(0, t.getBoundingClientRect().top + (window.pageYOffset || se.scrollTop || 0));
+            if(Math.abs(t.getBoundingClientRect().top) > 10) location.hash = '#' + t.id;
+          }catch(e3){}
+        }
+      }, 900);
+    }
+    function toFinal(){
+      if(left) return;
+      left = true;
+      closePop();
+      var f = document.querySelector('#s3');
+      /* 先清掉末页的渐显状态（它在屏幕外，看不见），滑到位后再从头播放 */
+      holdFinal = true;
+      if(f) f.classList.remove('in');
+      setTimeout(function(){ goTo(f); }, 80);
+      setTimeout(function(){
+        holdFinal = false;
+        if(f) f.classList.add('in');
+      }, 1000);
+    }
+
+    function submitWish(){
+      var v = (input.value || '').replace(/\s+/g, ' ').trim();
+      if(!v){                                   // 没写就晃一下按钮
+        go.classList.remove('shake');
+        void go.offsetWidth;
+        go.classList.add('shake');
+        input.focus();
+        return;
+      }
+      echo.textContent = v;                     // 愿望变成标题同款字体
+      echo.classList.add('show');
+      input.classList.add('hide');
+      input.blur();
+      go.classList.add('done');
+      if(showTimer) clearTimeout(showTimer);
+      showTimer = setTimeout(function(){ pop.classList.add('show'); }, 520);
+    }
+    go.addEventListener('click', submitWish);
+    input.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' || e.keyCode === 13){ e.preventDefault(); submitWish(); }
+    });
+    /* 弹窗不自动消失：点图4 或 滑动才走 */
+    pop.addEventListener('click', toFinal);
+    var sy = null;
+    pop.addEventListener('touchstart', function(e){ sy = e.touches[0].clientY; }, {passive:true});
+    pop.addEventListener('touchmove', function(e){
+      if(sy === null) return;
+      if(Math.abs(e.touches[0].clientY - sy) > 26) toFinal();
+    }, {passive:true});
+    pop.addEventListener('touchend', function(){ sy = null; }, {passive:true});
+    pop.addEventListener('wheel', function(e){
+      if(Math.abs(e.deltaY) > 8) toFinal();
+    }, {passive:true});
+  })();
+
+  /* ── 滚动渐显 ── */
+  var io = new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); } });
+  }, { rootMargin:'0px 0px -14% 0px', threshold:0.08 });
+
+  /* 末页要占满大半屏才开始渐显，避免和信纸糊在一起 */
+  var ioEnd = new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(e.isIntersecting && !holdFinal){ final.classList.add('in'); }
+    });
+  }, { threshold:0.42 });
+
+  function checkReveal(){
+    document.querySelectorAll('.rv').forEach(function(el){ io.observe(el); });
+    ioEnd.observe(final);
+  }
+
+  /* 末页背景微视差（rAF；不用 animation-timeline，Safari 不支持） */
+  var bg = document.querySelector('.final-bg'), ticking = false;
+  function parallax(){
+    var r = final.getBoundingClientRect();
+    if(r.top < window.innerHeight && r.bottom > 0){
+      var p = (window.innerHeight - r.top) / (window.innerHeight + r.height);
+      bg.style.transform = 'translate3d(0,' + ((p - .5) * 26).toFixed(1) + 'rem,0)';
+    }
+    ticking = false;
+  }
+  window.addEventListener('scroll', function(){
+    if(!ticking){ ticking = true; requestAnimationFrame(parallax); }
+  }, { passive:true });
+
+  /* ── 深链：#s1 / #s2 直达 ── */
+  function goto(h){
+    var t = document.querySelector(h);
+    if(!t) return;
+    opened = true; body.classList.remove('locked');
+    cover.style.display = 'none';
+    checkReveal();
+    if(h !== '#s0'){
+      setTimeout(function(){
+        try{ t.scrollIntoView({behavior:'auto', block:'start'}); }
+        catch(err){ try{ t.scrollIntoView(true); }catch(e2){} }
+      }, 140);
+    }
+  }
+  if(location.hash){ setTimeout(function(){ goto(location.hash); }, 80); }
+
+  checkReveal();
+  window.addEventListener('load', function(){ setTimeout(checkReveal, 200); });
+})();
+</script>
+</body>
+</html>
